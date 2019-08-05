@@ -21,6 +21,11 @@ with open(os.path.join(here, name, 'version.py')) as fp:
     exec(fp.read(), version_info)
 version = version_info['_paintera_version']
 
+# https://stackoverflow.com/a/14159430/1725687
+# need to add package_data... WHY???
+completion_segments = ['share', 'bash-completion', 'completions', 'paintera']
+data_files = [(os.path.join(*completion_segments[:-1]), [os.path.join(*completion_segments)])]
+
 setup(
     name=name,
     version=version.python_version(),
@@ -30,5 +35,6 @@ setup(
     url='https://github.com/saalfeldlab/paintera',
     packages=['paintera'],
     entry_points=entry_points,
-    install_requires=install_requires
+    install_requires=install_requires,
+    data_files=data_files
 )

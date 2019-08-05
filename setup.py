@@ -9,8 +9,7 @@ install_requires=[
 ]
 entry_points={
     'console_scripts': [
-        'paintera=paintera:launch_paintera',
-        'paintera-show-container=paintera:launch_paintera_show_container'
+        'paintera=paintera:launch_paintera'
     ]
 }
 

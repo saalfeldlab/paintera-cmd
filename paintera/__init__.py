@@ -13,10 +13,31 @@ _groupId                 = 'org.janelia.saalfeldlab'
 _artifactId              = 'paintera'
 _slf4j_endpoint          = os.getenv('PAINTERA_SLF4J_BINDING', f'org.slf4j:slf4j-simple:{version._slf4j_version}')
 
+def _get_paintera_version(argv=None):
+    import argparse
+    argv = sys.argv[1:] if argv is None else argv
+    if ('--' in argv):
+
+        def version_from_string(string):
+            split = string.split('.')
+            major, minor, patch = [int(s) for s in split[:3]]
+            tag = '' if len(split) < 4 else split[3]
+            return version._Version(major, minor, patch, tag)
+
+        parser = argparse.ArgumentParser(usage=argparse.SUPPRESS)
+        parser.add_argument('--use-version', type=version_from_string)
+        args, unknown = parser.parse_known_args(argv)
+        return args.use_version, unknown
+
+    else:
+        return version._paintera_version, argv
+
 def launch_paintera():
+    paintera_version, argv = _get_paintera_version(argv=sys.argv[1:])
     return jgo.util.main_from_endpoint(
+        argv                        = argv,
         primary_endpoint            = f'{_groupId}:{_artifactId}',
-        primary_endpoint_version    = version._paintera_version.maven_version(),
+        primary_endpoint_version    = paintera_version.maven_version(),
         primary_endpoint_main_class = _paintera,
         secondary_endpoints         = (_slf4j_endpoint,))
 

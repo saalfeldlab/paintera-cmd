@@ -27,7 +27,7 @@ def _get_paintera_version(argv=None):
         parser = argparse.ArgumentParser(usage=argparse.SUPPRESS)
         parser.add_argument('--use-version', type=version_from_string)
         args, unknown = parser.parse_known_args(argv)
-        return args.use_version, unknown
+        return version._paintera_version if args.use_version is None else args.use_version, unknown
 
     else:
         return version._paintera_version, argv

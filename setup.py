@@ -5,7 +5,7 @@ import os
 
 install_requires=[
     'jgo>=0.4.0',
-    'paintera-conversion-helper>=0.7.0'
+    'paintera-conversion-helper>=0.8.0'
 ]
 entry_points={
     'console_scripts': [

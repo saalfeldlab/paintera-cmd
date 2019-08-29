@@ -6,6 +6,7 @@ import sys
 from . import version
 
 _paintera                = '@Paintera'
+_paintera2               = '@Paintera2'
 _paintera_show_container = '@PainteraShowContainer'
 _picocli_autocomplete    = 'picocli.AutoComplete'
 _paintera_cli_args       = 'org.janelia.saalfeldlab.paintera.PainteraCommandLineArgs'
@@ -39,6 +40,15 @@ def launch_paintera():
         primary_endpoint            = f'{_groupId}:{_artifactId}',
         primary_endpoint_version    = paintera_version.maven_version(),
         primary_endpoint_main_class = _paintera,
+        secondary_endpoints         = (_slf4j_endpoint,))
+
+def launch_paintera_experimental():
+    paintera_version, argv = _get_paintera_version(argv=sys.argv[1:])
+    return jgo.util.main_from_endpoint(
+        argv                        = argv,
+        primary_endpoint            = f'{_groupId}:{_artifactId}',
+        primary_endpoint_version    = paintera_version.maven_version(),
+        primary_endpoint_main_class = _paintera2,
         secondary_endpoints         = (_slf4j_endpoint,))
 
 def generate_paintera_bash_completion():

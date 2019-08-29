@@ -10,6 +10,7 @@ install_requires=[
 entry_points={
     'console_scripts': [
         'paintera=paintera:launch_paintera',
+        'paintera-experimental=paintera:launch_paintera_experimental',
         'generate-paintera-bash-completion=paintera:generate_paintera_bash_completion'
     ]
 }

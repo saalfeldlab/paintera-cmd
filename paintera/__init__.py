@@ -39,7 +39,7 @@ def launch_paintera():
         argv                        = argv,
         primary_endpoint            = f'{_groupId}:{_artifactId}',
         primary_endpoint_version    = paintera_version.maven_version(),
-        primary_endpoint_main_class = _paintera,
+        primary_endpoint_main_class = _paintera2,
         secondary_endpoints         = (_slf4j_endpoint,))
 
 def launch_paintera_experimental():

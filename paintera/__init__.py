@@ -87,7 +87,7 @@ def generate_paintera_bash_completion():
 
     args = parser.parse_args(args=argv)
 
-    output = os.path.join(args.prefix, relative_path) if args.output is None else output
+    output = os.path.join(args.prefix, relative_path) if args.output is None else args.output
 
     argv = [
         '-n', 'paintera',

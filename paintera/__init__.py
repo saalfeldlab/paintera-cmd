@@ -23,7 +23,7 @@ def _get_paintera_version(argv=None):
             split = string.split('.')
             try:
                 major, minor, patch = [int(s) for s in split[:3]]
-                tag = None
+                tag = ''
             except:
                 major, minor = [int(s) for s in split[:2]]
                 patch = int(split[2].split('-')[0])

@@ -21,8 +21,13 @@ def _get_paintera_version(argv=None):
 
         def version_from_string(string):
             split = string.split('.')
-            major, minor, patch = [int(s) for s in split[:3]]
-            tag = '' if len(split) < 4 else split[3]
+            try:
+                major, minor, patch = [int(s) for s in split[:3]]
+                tag = None
+            except:
+                major, minor = [int(s) for s in split[:2]]
+                patch = int(split[2].split('-')[0])
+                tag = 'SNAPSHOT'
             return version._Version(major, minor, patch, tag)
 
         parser = argparse.ArgumentParser(usage=argparse.SUPPRESS)

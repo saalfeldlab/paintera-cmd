@@ -6,7 +6,6 @@ import sys
 from . import version
 
 _paintera                = '@Paintera'
-_paintera2               = '@Paintera2'
 _paintera_show_container = '@PainteraShowContainer'
 _picocli_autocomplete    = 'picocli.AutoComplete'
 _paintera_cli_args       = 'org.janelia.saalfeldlab.paintera.PainteraCommandLineArgs'
@@ -43,7 +42,7 @@ def launch_paintera():
         argv                        = argv,
         primary_endpoint            = f'{_groupId}:{_artifactId}',
         primary_endpoint_version    = paintera_version.maven_version(),
-        primary_endpoint_main_class = _paintera2)
+        primary_endpoint_main_class = _paintera)
 
 def generate_paintera_bash_completion():
     relative_path = os.path.join(

@@ -12,7 +12,6 @@ _picocli_autocomplete    = 'picocli.AutoComplete'
 _paintera_cli_args       = 'org.janelia.saalfeldlab.paintera.PainteraCommandLineArgs'
 _groupId                 = 'org.janelia.saalfeldlab'
 _artifactId              = 'paintera'
-_slf4j_endpoint          = os.getenv('PAINTERA_SLF4J_BINDING', f'org.slf4j:slf4j-simple:{version._slf4j_version}')
 
 def _get_paintera_version(argv=None):
     import argparse
@@ -44,8 +43,7 @@ def launch_paintera():
         argv                        = argv,
         primary_endpoint            = f'{_groupId}:{_artifactId}',
         primary_endpoint_version    = paintera_version.maven_version(),
-        primary_endpoint_main_class = _paintera2,
-        secondary_endpoints         = (_slf4j_endpoint,))
+        primary_endpoint_main_class = _paintera2)
 
 def generate_paintera_bash_completion():
     relative_path = os.path.join(
@@ -96,6 +94,5 @@ def generate_paintera_bash_completion():
         primary_endpoint            = f'{_groupId}:{_artifactId}',
         argv                        = jgo_argv + argv,
         primary_endpoint_version    = version._paintera_version.maven_version(),
-        primary_endpoint_main_class = _picocli_autocomplete,
-        secondary_endpoints         = (_slf4j_endpoint,))
+        primary_endpoint_main_class = _picocli_autocomplete)
 

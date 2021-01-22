@@ -4,6 +4,7 @@ import pathlib
 import sys
 
 from . import version
+from .javafx_modules import javafx_args
 
 _paintera                = '@Paintera'
 _paintera_show_container = '@PainteraShowContainer'
@@ -38,11 +39,19 @@ def _get_paintera_version(argv=None):
 
 def launch_paintera():
     paintera_version, argv = _get_paintera_version(argv=sys.argv[1:])
+    args_with_modules = prepend_javafx_modules(argv)
     return jgo.util.main_from_endpoint(
-        argv                        = argv,
-        primary_endpoint            = f'{_groupId}:{_artifactId}',
-        primary_endpoint_version    = paintera_version.maven_version(),
-        primary_endpoint_main_class = _paintera)
+        argv=args_with_modules,
+        primary_endpoint=f'{_groupId}:{_artifactId}',
+        primary_endpoint_version=paintera_version.maven_version(),
+        primary_endpoint_main_class=_paintera)
+
+def prepend_javafx_modules(argv):
+    if "--module-path" not in argv:
+        if '--' not in argv:
+            javafx_args.append('--')
+        return javafx_args + argv
+    return argv
 
 def generate_paintera_bash_completion():
     relative_path = os.path.join(

@@ -1,5 +1,4 @@
 import sys
-from jgo.jgo import default_config
 
 _javafx_platform_map = {
     "linux": "linux",
@@ -9,7 +8,8 @@ _javafx_platform_map = {
 }
 
 _javafx_version = "13.0.1"
-_javafx_group = "org/openjfx"
+_javafx_group = "org.openjfx"
+
 _modules_and_opens = {
     "javafx.base": [
         'javafx.util',
@@ -19,6 +19,10 @@ _modules_and_opens = {
         'com.sun.javafx.event',
     ],
     "javafx.controls": [],
+    "javafx.fxml": [],
+    "javafx.media": [],
+    "javafx.swing": [],
+    "javafx.web": [],
     "javafx.graphics": [
         "javafx.scene",
         "javafx.stage",
@@ -44,31 +48,41 @@ _modules_and_opens = {
 }
 
 
-def _javafx_module_path():
-    m2_repository = default_config()['settings'].get('m2Repo')
-    relative_module_paths = []
+def javafx_module_deps():
+    """
+    jgo expects --module-dependencies to be a list of the form: "group:artifact:version[:classifier].
+        We construct that here.
+
+    :return: list[str] of "group:artifact:version[:classifier]" to be placed on the module-path
+    """
+    module_dependencies = []
     for module in _modules_and_opens.keys():
         module_path_name = module.replace(".", "-")
-        shared_prefix = f"{_javafx_group}/{module_path_name}/{_javafx_version}/{module_path_name}-{_javafx_version}"
-        common_module = f"{shared_prefix}.jar"
-        platform_specific_module = f"{shared_prefix}-{_javafx_platform_map[sys.platform]}.jar"
-        relative_module_paths.append(platform_specific_module),
-        relative_module_paths.append(common_module)
-    absolute_module_paths = (f"{m2_repository}/{x}" for x in relative_module_paths)
-    module_path = ":".join(absolute_module_paths)
-    return module_path
+        classifier = _javafx_platform_map[sys.platform]
+        common_artifact = f"{_javafx_group}:{module_path_name}:{_javafx_version}"
+        platform_artifact = f"{_javafx_group}:{module_path_name}:{_javafx_version}:{classifier}"
+        module_dependencies.append(common_artifact)
+        module_dependencies.append(platform_artifact)
+    return module_dependencies
 
 
-# Allow access to classes that are not exported (currently needed)
-javafx_args = ["--illegal-access=permit"]
+def javafx_modules():
+    """
+    :return: comma separate list of the javafx modules we with to add to the jvm runtime
+    """
+    return ",".join(_modules_and_opens.keys());
 
-# for each class we use, open it to ALL-UNNAMED, which contains Paintera,
-#   since it isn't utilizing the module system currently
+
+# Specify for jgo the dependencies which should be treated as modules
+javafx_args = ["--module-dependencies"]
+javafx_args.extend(javafx_module_deps())
+
+# Allow access to classes that are not exported by their modules (currently needed).
+javafx_args += ["--illegal-access=permit"]
+# for each class we use, open it to ALL-UNNAMED, which contains Paintera since it isn't utilizing the module system currently
 for module_name, packages_to_open in _modules_and_opens.items():
     for package in packages_to_open:
         javafx_args.append(f"--add-opens={module_name}/{package}=ALL-UNNAMED")
 
-# add the module path for the javafx modules
-javafx_args.extend(["--module-path", _javafx_module_path()])
-# specify which modules we actually use.
-javafx_args.extend(["--add-modules", ",".join(_modules_and_opens.keys())])
+javafx_args += ["--add-modules"]
+javafx_args += [javafx_modules()]

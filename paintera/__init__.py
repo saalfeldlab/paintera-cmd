@@ -41,10 +41,10 @@ def launch_paintera():
     paintera_version, argv = _get_paintera_version(argv=sys.argv[1:])
     args_with_modules = prepend_javafx_modules(argv)
     return jgo.util.main_from_endpoint(
-        argv=args_with_modules,
-        primary_endpoint=f'{_groupId}:{_artifactId}',
-        primary_endpoint_version=paintera_version.maven_version(),
-        primary_endpoint_main_class=_paintera)
+        argv                        = args_with_modules,
+        primary_endpoint            = f'{_groupId}:{_artifactId}',
+        primary_endpoint_version    = paintera_version.maven_version(),
+        primary_endpoint_main_class = _paintera)
 
 def prepend_javafx_modules(argv):
     if "--module-path" not in argv:
@@ -99,7 +99,7 @@ def generate_paintera_bash_completion():
     pathlib.Path(output).parent.mkdir(parents=True, exist_ok=True)
 
     return jgo.util.main_from_endpoint(
-        primary_endpoint            = f"{_groupId}:{_artifactId}",
+        primary_endpoint            = f'{_groupId}:{_artifactId}',
         argv                        = jgo_argv + argv,
         primary_endpoint_version    = version._paintera_version.maven_version(),
         primary_endpoint_main_class = _picocli_autocomplete)

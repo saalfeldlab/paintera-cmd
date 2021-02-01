@@ -1,5 +1,9 @@
 import sys
-from jgo.jgo import default_config
+
+from jgo import jgo
+from . import version
+
+_paintera_endpoint = f'org.janelia.saalfeldlab:paintera:{version._paintera_version.maven_version()}'
 
 _javafx_platform_map = {
     "linux": "linux",
@@ -9,7 +13,6 @@ _javafx_platform_map = {
 }
 
 _javafx_version = "13.0.1"
-_javafx_group = "org/openjfx"
 _modules_and_opens = {
     "javafx.base": [
         'javafx.util',
@@ -19,6 +22,10 @@ _modules_and_opens = {
         'com.sun.javafx.event',
     ],
     "javafx.controls": [],
+    "javafx.fxml": [],
+    "javafx.media": [],
+    "javafx.swing": [],
+    "javafx.web": [],
     "javafx.graphics": [
         "javafx.scene",
         "javafx.stage",
@@ -45,16 +52,30 @@ _modules_and_opens = {
 
 
 def _javafx_module_path():
-    m2_repository = default_config()['settings'].get('m2Repo')
+    """
+    We need to determine where jgo copies the jar dependencies too, then build out module-path from that.
+    We grab the endpoint we pass to jgo, then call jgo's internal methods for determining the workspace.
+    After that, we determine the javafx dependencies we need to add the module-path. For each dependency
+     there is a "common" jar, as a well as a platform specific jar.
+
+    :return: the module-path which points to the javafx module dependencies
+    """
+    # Determine the location of the jgo-discovered dependencies
+    endpoints = jgo.endpoints_from_strings([_paintera_endpoint])
+    coordinates = jgo.coordinates_from_endpoints(endpoints)
+    cache_dir = jgo.default_config()['settings'].get('cacheDir')
+    workspace = jgo.workspace_dir_from_coordinates(coordinates, cache_dir=cache_dir)
     relative_module_paths = []
     for module in _modules_and_opens.keys():
+        # generate a list of the dependencies we should expect to find.
         module_path_name = module.replace(".", "-")
-        shared_prefix = f"{_javafx_group}/{module_path_name}/{_javafx_version}/{module_path_name}-{_javafx_version}"
+        shared_prefix = f"{module_path_name}-{_javafx_version}"
         common_module = f"{shared_prefix}.jar"
         platform_specific_module = f"{shared_prefix}-{_javafx_platform_map[sys.platform]}.jar"
         relative_module_paths.append(platform_specific_module),
         relative_module_paths.append(common_module)
-    absolute_module_paths = (f"{m2_repository}/{x}" for x in relative_module_paths)
+    # create the module path
+    absolute_module_paths = (f"{workspace}/{x}" for x in relative_module_paths)
     module_path = ":".join(absolute_module_paths)
     return module_path
 

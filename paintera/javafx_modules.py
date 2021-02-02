@@ -1,3 +1,5 @@
+import os
+import pathlib
 import sys
 
 from jgo import jgo
@@ -51,6 +53,18 @@ _modules_and_opens = {
 }
 
 
+def _get_jgo_cache_dir():
+    config = jgo.default_config()
+    if not '--ignore-jgorc' in sys.argv:
+        config_file = pathlib.Path.home() / '.jgorc'
+        config.read(config_file)
+
+    if os.getenv(jgo.jgo_cache_dir_environment_variable()) is not None:
+        cache_dir = os.getenv(jgo.jgo_cache_dir_environment_variable())
+        config.set('settings', 'cacheDir', cache_dir)
+    return config['settings'].get('cacheDir')
+
+
 def _javafx_module_path():
     """
     We need to determine where jgo copies the jar dependencies too, then build out module-path from that.
@@ -63,7 +77,7 @@ def _javafx_module_path():
     # Determine the location of the jgo-discovered dependencies
     endpoints = jgo.endpoints_from_strings([_paintera_endpoint])
     coordinates = jgo.coordinates_from_endpoints(endpoints)
-    cache_dir = jgo.default_config()['settings'].get('cacheDir')
+    cache_dir =_get_jgo_cache_dir()
     workspace = jgo.workspace_dir_from_coordinates(coordinates, cache_dir=cache_dir)
     relative_module_paths = []
     for module in _modules_and_opens.keys():

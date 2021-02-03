@@ -7,6 +7,7 @@ from . import version
 
 _paintera_endpoint = f'org.janelia.saalfeldlab:paintera:{version._paintera_version.maven_version()}'
 
+_classpath_separator = ':' if sys.platform != 'win32' else ';'
 _javafx_platform_map = {
     "linux": "linux",
     "linux2": "linux",
@@ -90,7 +91,7 @@ def _javafx_module_path():
         relative_module_paths.append(common_module)
     # create the module path
     absolute_module_paths = (f"{workspace}/{x}" for x in relative_module_paths)
-    module_path = ":".join(absolute_module_paths)
+    module_path = _classpath_separator.join(absolute_module_paths)
     return module_path
 
 

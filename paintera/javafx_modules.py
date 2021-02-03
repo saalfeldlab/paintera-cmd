@@ -68,7 +68,7 @@ def _get_jgo_cache_dir():
 
 def _javafx_module_path():
     """
-    We need to determine where jgo copies the jar dependencies too, then build out module-path from that.
+    We need to determine where jgo copies the jar dependencies to, then build out module-path from that.
     We grab the endpoint we pass to jgo, then call jgo's internal methods for determining the workspace.
     After that, we determine the javafx dependencies we need to add the module-path. For each dependency
      there is a "common" jar, as a well as a platform specific jar.

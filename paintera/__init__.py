@@ -1,3 +1,5 @@
+import subprocess
+
 import jgo.util
 import os
 import pathlib
@@ -37,21 +39,59 @@ def _get_paintera_version(argv=None):
     else:
         return version._paintera_version, argv
 
+
+def prepend_required_default_args(argv):
+    # Start with the manual scaling args, to support HiDPI scaling on linus
+    additional_args = manual_scaling_args()
+    # Add args to ensure GPU is always used (and required)
+    additional_args.append("-Dprism.forceGPU=true")
+    # Add the javafx arguments, if not previously set
+    if "--module-path" not in argv:
+        additional_args.extend(javafx_args)
+    # Append the arg separator if not present.
+    if '--' not in argv:
+        additional_args.append('--')
+    return additional_args + argv
+
 def launch_paintera():
     paintera_version, argv = _get_paintera_version(argv=sys.argv[1:])
-    args_with_modules = prepend_javafx_modules(argv)
+    final_args = prepend_required_default_args(argv)
     return jgo.util.main_from_endpoint(
-        argv                        = args_with_modules,
-        primary_endpoint            = f'{_groupId}:{_artifactId}',
-        primary_endpoint_version    = paintera_version.maven_version(),
-        primary_endpoint_main_class = _paintera)
+        argv=final_args,
+        primary_endpoint=f'{_groupId}:{_artifactId}',
+        primary_endpoint_version=paintera_version.maven_version(),
+        primary_endpoint_main_class=_paintera)
 
-def prepend_javafx_modules(argv):
-    if "--module-path" not in argv:
-        if '--' not in argv:
-            javafx_args.append('--')
-        return javafx_args + argv
-    return argv
+
+def manual_scaling_args():
+    """
+    This determines and provides the appropriate scaling properties for javafx on hi-dpi monitors, when running linux.
+    This will only impact scaling when using Mutter (default for GNOME 3 )
+
+    :return: list additional javafx properties which override application scaling
+    """
+    if 'linux' in sys.platform:
+        scale = dbus_request_mutter_screen_scale_factor()
+        if (scale == None or len(scale) == 0):
+            #  If there request doesn't work, don't attempt to override scaling. Paintera should work,
+            #   though the resolution may not match the system's display configuration.
+            return []
+        return ["-Dprism.allowhidpi=true", f"-Dglass.gtk.uiScale={scale}"]
+
+
+def dbus_request_mutter_screen_scale_factor():
+    """
+    Queries the Mutter DisplayConfig API via dbus to determine the current scale factor.
+
+    :return: the current scale factor used by the Mutter display manager on linux
+    """
+    dbus_name = 'org.gnome.Mutter.DisplayConfig'
+    message_name = f"{dbus_name}.GetCurrentState"
+    dest_obj_path = '/org/gnome/Mutter/DisplayConfig'
+    return subprocess.run(
+        f"dbus-send --print-reply --dest={dbus_name} {dest_obj_path} {message_name} | grep -i scaling-factor -A 1 | grep int32 " + "| awk '{print $3}'",
+        capture_output=True, text=True, shell=True).stdout.strip()
+
 
 def generate_paintera_bash_completion():
     relative_path = os.path.join(

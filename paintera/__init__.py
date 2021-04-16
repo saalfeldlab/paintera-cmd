@@ -77,6 +77,8 @@ def manual_scaling_args():
             #   though the resolution may not match the system's display configuration.
             return []
         return ["-Dprism.allowhidpi=true", f"-Dglass.gtk.uiScale={scale}"]
+    else:
+        return []
 
 
 def dbus_request_mutter_screen_scale_factor():

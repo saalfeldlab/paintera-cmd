@@ -26,6 +26,8 @@ setup(
     version=version.python_version(),
     author='Philipp Hanslovsky',
     author_email='hanslovskyp@janelia.hhmi.org',
+    maintainer="Caleb Hulbert",
+    maintainer_email="hulbertc@janelia.hmmi.org",
     description='paintera',
     url='https://github.com/saalfeldlab/paintera',
     packages=['paintera'],

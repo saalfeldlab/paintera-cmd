@@ -5,8 +5,8 @@ import os
 import pathlib
 import sys
 
-from . import version
-from .javafx_modules import javafx_args
+from paintera import version
+from paintera.javafx_modules import javafx_args
 
 _paintera                = '@Paintera'
 _paintera_show_container = '@PainteraShowContainer'
@@ -146,3 +146,5 @@ def generate_paintera_bash_completion():
         primary_endpoint_version    = version._paintera_version.maven_version(),
         primary_endpoint_main_class = _picocli_autocomplete)
 
+if __name__ == '__main__':
+    launch_paintera()

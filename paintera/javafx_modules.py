@@ -3,7 +3,7 @@ import pathlib
 import sys
 
 from jgo import jgo
-from . import version
+from paintera import version
 
 _paintera_endpoint = f'org.janelia.saalfeldlab:paintera:{version._paintera_version.maven_version()}'
 
@@ -15,7 +15,7 @@ _javafx_platform_map = {
     "darwin": "mac"
 }
 
-_javafx_version = "13.0.1"
+_javafx_version = "16"
 _modules_and_opens = {
     "javafx.base": [
         'javafx.util',

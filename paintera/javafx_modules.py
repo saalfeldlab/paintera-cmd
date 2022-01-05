@@ -37,6 +37,7 @@ _modules_and_opens = {
         "javafx.scene.input",
         "javafx.scene.image",
         "com.sun.prism",
+        "com.sun.javafx.application",
         "com.sun.javafx.geom",
         "com.sun.javafx.image",
         "com.sun.javafx.scene",

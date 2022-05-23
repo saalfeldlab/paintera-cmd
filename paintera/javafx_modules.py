@@ -3,6 +3,7 @@ import pathlib
 import sys
 
 from jgo import jgo
+
 from paintera import version
 
 _paintera_endpoint = f'org.janelia.saalfeldlab:paintera:{version._paintera_version.maven_version()}'
@@ -37,6 +38,7 @@ _modules_and_opens = {
         "javafx.scene.input",
         "javafx.scene.image",
         "com.sun.prism",
+        "com.sun.prism.paint",
         "com.sun.javafx.application",
         "com.sun.javafx.geom",
         "com.sun.javafx.image",
@@ -79,7 +81,7 @@ def _javafx_module_path():
     # Determine the location of the jgo-discovered dependencies
     endpoints = jgo.endpoints_from_strings([_paintera_endpoint])
     coordinates = jgo.coordinates_from_endpoints(endpoints)
-    cache_dir =_get_jgo_cache_dir()
+    cache_dir = _get_jgo_cache_dir()
     workspace = jgo.workspace_dir_from_coordinates(coordinates, cache_dir=cache_dir)
     relative_module_paths = []
     for module in _modules_and_opens.keys():

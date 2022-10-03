@@ -16,7 +16,7 @@ _javafx_platform_map = {
     "darwin": "mac"
 }
 
-_javafx_version = "16"
+_javafx_version = "18.0.1"
 _modules_and_opens = {
     "javafx.base": [
         'javafx.util',

@@ -38,4 +38,4 @@ class _Version(object):
     def __str__(self):
         return self.python_version()
 
-_paintera_version = _Version(0, 33, 1, 'dev0')
+_paintera_version = _Version(0, 34, 0, 'dev0')
